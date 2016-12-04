@@ -29,7 +29,7 @@ print_divider() { for divider in $(seq 1 "$1") ; do printf "%s" "$2" ; done ; pr
 
 if [ "$#" -eq 0 ] ; then
   SEQSTART=1
-  SEQEND=1
+  SEQEND=2
 elif [ "$#" -eq 1 ] && [ "x$1" != "x-h" ] ; then
   SEQSTART="$1"
   SEQEND="$1"
@@ -56,7 +56,12 @@ for i in $(seq "$SEQSTART" "$SEQEND") ; do
     printf "%s\n" "$day"
 
     cd "$day"
-    ./run < input
+
+    if [ "$i" = "2" ] ; then
+      ./run input
+    else
+      ./run < input
+    fi
 
     print_divider 72 "="
     printf "\n"

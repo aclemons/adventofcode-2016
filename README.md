@@ -13,3 +13,8 @@ You can use `run` to run the all the puzzles or a particular puzzle:
         Examples:
           ./run
           ./run 4
+
+Solutions
+
+* day01 - Ruby 2.3.3
+* day02 - Posix sh
