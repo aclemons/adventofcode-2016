@@ -1,0 +1,88 @@
+#!/usr/bin/ruby
+
+# MIT License
+#
+# Copyright (c) 2016 Andrew Clemons
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+require 'set'
+
+X = 0
+Y = 1
+
+NORTH = :N
+EAST  = :E
+SOUTH = :S
+WEST  = :W
+
+OPERATION_MAPPING = {
+  NORTH => { :R => [X, :+, EAST],  :L => [X, :-, WEST] },
+  EAST =>  { :R => [Y, :-, SOUTH], :L => [Y, :+, NORTH] },
+  SOUTH => { :R => [X, :-, WEST],  :L => [X, :+, EAST] },
+  WEST =>  { :R => [Y, :+, NORTH], :L => [Y, :-, SOUTH] }
+}.freeze
+
+def input
+  ARGV.empty? ? STDIN.read : File.read(ARGV[0])
+end
+
+def move(looking, move)
+  turn, amount = /(L|R)(\d+)/.match(move).captures
+  turn         = turn.to_sym
+  amount       = amount.to_i
+
+  axis, operation, new_direction = OPERATION_MAPPING[looking][turn] || raise
+
+  [axis, operation, amount, new_direction]
+end
+
+def calculate_distance
+  position          = [0, 0]
+  repeated_position = nil
+
+  visited = Set.new
+  visited << position.dup
+
+  input.split(/,\s*/).reduce(NORTH) do |looking, move|
+
+    axis, operation, distance, now_looking = move(looking, move)
+
+    position = (1..distance).map do |step_distance|
+      step = position.dup
+      step[axis] = (step[axis]).send(operation, step_distance)
+
+      if repeated_position.nil? && visited.include?(step)
+        repeated_position = step.dup
+      end
+
+      visited << step
+
+      step
+    end.last
+
+    now_looking
+  end
+
+  [position, repeated_position].map{ |pos| pos.map(&:abs).reduce(&:+) }
+end
+
+distance, repeated_distance = calculate_distance
+
+puts "Distance travelled is #{distance} and visited the block #{repeated_distance} away twice first"
