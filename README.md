@@ -19,3 +19,4 @@ Solutions
 * day01 - Ruby 2.3.3
 * day02 - Posix sh
 * day03 - Scala (tested with 2.12.0)
+* day04 - Python (tested with 2.7.11)

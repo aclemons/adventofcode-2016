@@ -1,5 +1,5 @@
-#!/bin/sh
-
+#!/usr/bin/env python2
+#
 # MIT License
 #
 # Copyright (c) 2016 Andrew Clemons
@@ -22,51 +22,37 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-set -e
+import sys
+import re
+import string
 
-# shellcheck disable=SC2034
-print_divider() { for divider in $(seq 1 "$1") ; do printf "%s" "$2" ; done ; printf "\n" ; }
+from itertools import *
 
-if [ "$#" -eq 0 ] ; then
-  SEQSTART=1
-  SEQEND=4
-elif [ "$#" -eq 1 ] && [ "x$1" != "x-h" ] ; then
-  SEQSTART="$1"
-  SEQEND="$1"
-else
- cat << EOF
-Usage: run [day#]
+sum = 0
+north_pole = None
+decryption_set = string.ascii_lowercase
+decryption_size = len(decryption_set)
 
-Runs all the puzzles or optionally the puzzle for the given day
+with sys.stdin as fp:
+    for line in fp:
+        line = line.rstrip()
+        m = re.search(r'^(.*?)-(\d+)\[(.*?)\]', line)
 
-Examples:
-  ./run
-  ./run 4
-EOF
+        name = m.group(1)
+        sector = int(m.group(2))
+        checksum = m.group(3)
 
-  exit 1
-fi
+        results = sorted([list(g) for k, g in groupby(sorted(re.sub('-', '', name)))], key=lambda arr: -len(arr))
 
-for i in $(seq "$SEQSTART" "$SEQEND") ; do
-  day="$(printf "day%02d\n" "$i")"
+        matcher = lambda idx: (results[idx])[0] == checksum[idx]
 
-  (
+        if not (False in map(matcher, range(0, 5))):
+            sum += int(sector)
 
-    print_divider 72 "="
-    printf "%s\n" "$day"
+        decrypted_name = ''.join(map(lambda c: (' ' if c == '-' else (decryption_set[decryption_set.index(c) + (sector % decryption_size) - decryption_size])), name))
 
-    cd "$day"
+        if 'northpole object storage' == decrypted_name:
+            north_pole = sector
 
-    if [ "$i" = "1" ] ; then
-      ./run < input
-    elif [ "$i" = "2" ] ; then
-      ./run input
-    else
-      zcat input.gz | ./run
-    fi
-
-    print_divider 72 "="
-    printf "\n"
-  )
-done
-
+print "The sum of the sector IDs of the real rooms {0}".format(sum)
+print "The sector ID of the room where North Pole objects are stored is {0}".format(north_pole)

@@ -85,4 +85,5 @@ end
 
 distance, repeated_distance = calculate_distance
 
-puts "Distance travelled is #{distance} and visited the block #{repeated_distance} away twice first"
+puts "Easter Bunny HQ is #{distance} away"
+puts "The first location visited twice is #{repeated_distance} blocks away"
