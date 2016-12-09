@@ -61,6 +61,11 @@ for i in $(seq "$SEQSTART" "$SEQEND") ; do
       ./run < input
     elif [ "$i" = "2" ] ; then
       ./run input
+    elif [ "$i" = "5" ] ; then
+      cargo clean
+      cargo build --release --quiet
+      strip --strip-unneeded "target/release/$i"
+      "target/release/$i" < input
     else
       zcat input.gz | ./run
     fi

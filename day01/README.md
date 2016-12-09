@@ -21,7 +21,7 @@ ending at a new intersection.
 
 There's no time to follow such ridiculous instructions on foot, though, so you
 take a moment and work out the destination. Given that you can only walk on the
-street grid of the city, how far is the shortest path to the destination?
+[street grid of the city](https://en.wikipedia.org/wiki/Taxicab_geometry), how far is the shortest path to the destination?
 
 For example:
 

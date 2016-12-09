@@ -1,0 +1,8 @@
+[package]
+name = "day05"
+version = "0.1.0"
+authors = ["Andrew Clemons <aclemons@runbox.no>"]
+
+[dependencies]
+rust-crypto = "^0.2"
+pcre = "0.2.3"

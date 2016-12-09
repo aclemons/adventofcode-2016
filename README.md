@@ -20,3 +20,4 @@ Solutions
 * day02 - Posix sh
 * day03 - Scala (tested with 2.12.0)
 * day04 - Python (tested with 2.7.11)
+* day05 - Rust (tested with 1.13.0)
