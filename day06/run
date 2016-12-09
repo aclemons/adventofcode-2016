@@ -1,19 +1,19 @@
-#!/bin/sh
+#!/usr/bin/perl
 
 # MIT License
-#
+
 # Copyright (c) 2016 Andrew Clemons
-#
+
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-#
+
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-#
+
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -22,56 +22,38 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-set -e
+use strict;
+use warnings;
 
-# shellcheck disable=SC2034
-print_divider() { for divider in $(seq 1 "$1") ; do printf "%s" "$2" ; done ; printf "\n" ; }
+my %char_counts;
 
-if [ "$#" -eq 0 ] ; then
-  SEQSTART=1
-  SEQEND=6
-elif [ "$#" -eq 1 ] && [ "x$1" != "x-h" ] ; then
-  SEQSTART="$1"
-  SEQEND="$1"
-else
- cat << EOF
-Usage: run [day#]
+foreach my $line (<STDIN>) {
+    chomp($line);
 
-Runs all the puzzles or optionally the puzzle for the given day
+    foreach my $index (0..length($line) - 1) {
+        my $char = substr $line, $index, 1;
 
-Examples:
-  ./run
-  ./run 4
-EOF
+        if (not defined $char_counts{$index}{$char}) {
+            $char_counts{$index}{$char} = 0;
+        }
 
-  exit 1
-fi
+        $char_counts{$index}{$char} += 1;
+    }
+}
 
-for i in $(seq "$SEQSTART" "$SEQEND") ; do
-  day="$(printf "day%02d\n" "$i")"
+my $most_common = "";
+my $least_common = "";
 
-  (
+foreach my $index (sort keys %char_counts) {
+    my $hash = $char_counts{$index};
 
-    print_divider 72 "="
-    printf "%s\n" "$day"
+    my @sorted = sort { $hash->{$a} <=> $hash->{$b} } keys %$hash;
+    my $largest = $sorted[-1];
+    my $smallest = $sorted[0];
 
-    cd "$day"
+    $most_common = "$most_common$largest";
+    $least_common = "$least_common$smallest"
+}
 
-    if [ "$i" = "1" ] ; then
-      ./run < input
-    elif [ "$i" = "2" ] ; then
-      ./run input
-    elif [ "$i" = "5" ] ; then
-      cargo clean
-      cargo build --release --quiet
-      strip --strip-unneeded "target/release/$day"
-      "target/release/$day" < input
-    else
-      zcat input.gz | ./run
-    fi
-
-    print_divider 72 "="
-    printf "\n"
-  )
-done
-
+print "The error-corrected version of the message being sent is $most_common\n";
+print "The original message that Santa is trying to send is $least_common\n";

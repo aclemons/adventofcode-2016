@@ -16,8 +16,9 @@ You can use `run` to run the all the puzzles or a particular puzzle:
 
 Solutions
 
-* day01 - Ruby 2.3.3
-* day02 - Posix sh
+* day01 - Ruby (tested with 2.3.3)
+* day02 - Posix sh (tested with bash 4.3.46(1)-release in posix mode)
 * day03 - Scala (tested with 2.12.0)
 * day04 - Python (tested with 2.7.11)
 * day05 - Rust (tested with 1.13.0)
+* day06 - Perl (test with 5.22.2)
