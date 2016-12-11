@@ -24,3 +24,4 @@ Solutions
 * [day06](day06) - Perl     (tested with 5.22.2)
 * [day07](day07) - Java     (tested with openjdk 1.8.0_111)
 * [day08](day08) - NodeJS   (tested with 6.9.2)
+* [day09](day09) - Lua      (tested with 5.1.5)
