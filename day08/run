@@ -1,0 +1,126 @@
+#!/usr/bin/node
+
+// MIT License
+
+// Copyright (c) 2016 Andrew Clemons
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+var readline = require('readline');
+
+var display = new Array(50);
+for (var x = 0; x < display.length; x++) {
+    display[x] = new Array(6);
+
+    for (var y = 0; y < display[x].length; y++) {
+        display[x][y] = 0;
+    }
+}
+
+var input = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    terminal: false
+});
+
+input.on('line', function(line) {
+    var regex = /^(rect|rotate) ((\d+)x(\d+)|(row|column) (x|y)=(\d+) by (\d+))$/
+    var result = line.match(regex);
+
+    if (result[1] === 'rotate') {
+        if (result[5] === 'row') {
+            var y = parseInt(result[7]);
+
+            var newRow = new Array(display.length);
+
+            var x2 = parseInt(result[8]) % display.length;
+
+            for (var x1 = 0; x1 < display.length; x1++) {
+                newRow[x2] = display[x1][y];
+
+                x2++;
+
+                if (x2 >= display.length) {
+                    x2 = 0;
+                }
+            }
+
+            for (var x = 0;  x < 50; x++) {
+                display[x][y] = newRow[x];
+            }
+        } else if (result[5] === 'column') {
+            var newColumn = new Array(6);
+
+            var x = parseInt(result[7]);
+            var y2 = parseInt(result[8]) % 6;;
+
+            for (var y1 = 0; y1 < 6; y1++) {
+                newColumn[y2] = display[x][y1];
+
+                y2++;
+
+                if (y2 >= 6) {
+                    y2 = 0;
+                }
+            }
+
+            for (var y = 0;  y < 6; y++) {
+                display[x][y] = newColumn[y];
+            }
+        }
+
+    } else if (result[1] === 'rect') {
+        for (var x = 0; x < parseInt(result[3]); x++) {
+            for (var y = 0; y < parseInt(result[4]); y++) {
+                display[x][y] = 1;
+            }
+        }
+    }
+})
+
+
+input.on('close', function() {
+    var count = 0;
+    for (var x = 0; x < 50; x++) {
+        for (var y = 0; y < 6; y++) {
+            if (display[x][y] === 1) {
+                count++;
+            }
+        }
+    }
+
+    console.log(count + " pixels are lit");
+
+    console.log('=======================================')
+
+    for (var y = 0; y < display[0].length; y++) {
+        var displayText='';
+        for (var x = 0; x < display.length; x++) {
+            if (x > 0 && x % 5 === 0) {
+                displayText += '||' + display[x][y] + ' ';
+            } else {
+                displayText += display[x][y] + ' ';
+            }
+        }
+
+        console.log(displayText);
+    }
+
+    console.log('=======================================')
+});

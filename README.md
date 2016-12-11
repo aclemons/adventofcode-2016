@@ -23,3 +23,4 @@ Solutions
 * [day05](day05) - Rust     (tested with 1.13.0)
 * [day06](day06) - Perl     (tested with 5.22.2)
 * [day07](day07) - Java     (tested with openjdk 1.8.0_111)
+* [day08](day08) - NodeJS   (tested with 6.9.2)
