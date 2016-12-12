@@ -26,3 +26,4 @@ Solutions
 * [day08](day08) - NodeJS   (tested with 6.9.2)
 * [day09](day09) - Lua      (tested with 5.1.5)
 * [day10](day10) - Groovy   (tested with 2.4.7)
+* [day11](day11) - Unknown  (tested with unknown)
