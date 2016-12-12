@@ -27,3 +27,4 @@ Solutions
 * [day09](day09) - Lua      (tested with 5.1.5)
 * [day10](day10) - Groovy   (tested with 2.4.7)
 * [day11](day11) - Unknown  (tested with unknown)
+* [day12](day12) - Tcl      (tested with 8.6)
