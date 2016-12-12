@@ -1,0 +1,128 @@
+#!/usr/bin/env groovy
+
+// MIT License
+
+// Copyright (c) 2016 Andrew Clemons
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
+def commands = []
+System.in.eachLine() { line ->
+  commands << line
+}
+
+def outputs = [:]
+def bots = [:]
+
+def apply = { command ->
+  def matcher = command =~ /^value (\d+) goes to bot (\d+)$/
+
+  if (matcher.matches()) {
+    def value = matcher.group(1).toInteger()
+    def bot   = matcher.group(2).toInteger()
+
+    def arr = bots[bot]
+    if (!arr) {
+      arr = []
+      bots[bot] = arr
+    }
+
+    arr << value
+
+    if (arr.size() > 1) {
+      bots[bot] = arr.sort()
+    }
+
+    return true
+  }
+
+  matcher = command =~ /^bot (\d+) gives low to (output|bot) (\d+) and high to (output|bot) (\d+)$/
+
+  if (matcher.matches()) {
+    def bot            = matcher.group(1).toInteger()
+    def lowTargetType  = matcher.group(2)
+    def low            = matcher.group(3).toInteger()
+    def highTargetType = matcher.group(4)
+    def high           = matcher.group(5).toInteger()
+
+    def values = bots[bot]
+
+    if (!values || values.size() != 2) {
+      return false
+    }
+
+    def lowTarget;
+    if (lowTargetType == 'bot') {
+      lowTarget = bots
+    } else if (lowTargetType == 'output') {
+      lowTarget = outputs
+    }
+
+    def lowArr = lowTarget[low]
+    if (!lowArr) {
+      lowArr = []
+      lowTarget[low] = lowArr
+    }
+
+    def highTarget;
+    if (highTargetType == 'bot') {
+      highTarget = bots
+    } else if (highTargetType == 'output') {
+      highTarget = outputs
+    }
+
+    def highArr = highTarget[high]
+    if (!highArr) {
+      highArr = []
+      highTarget[high] = highArr
+    }
+
+    lowArr << values.first()
+    lowTarget[low] = lowArr.sort()
+
+    highArr << values.last()
+    highTarget[high] = highArr.sort()
+
+    values.clear()
+
+
+    return true
+  }
+
+  false
+}
+
+def matchingBot = null
+
+while (commands) {
+  def element = commands.remove(0)
+
+  if (!apply.call(element)) {
+    commands << element
+  }
+
+  if (!matchingBot) {
+    matchingBot = bots.find { it.value == [17, 61] }?.key
+  }
+}
+
+println("Bot $matchingBot is responsible for comparing value-61 microchips with value-17 microchips")
+
+def result = outputs[0].first() * outputs[1].first() * outputs[2].first()
+println("Multiplying together the values of one chip in each of outputs 0, 1, and 2 results in ${result}")
