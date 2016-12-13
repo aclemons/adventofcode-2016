@@ -28,3 +28,4 @@ Solutions
 * [day10](day10) - Groovy   (tested with 2.4.7)
 * [day11](day11) - Unknown  (tested with unknown)
 * [day12](day12) - Tcl      (tested with 8.6)
+* [day13](day13) - C        (tested with gcc 5.3.0)

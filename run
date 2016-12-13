@@ -29,7 +29,7 @@ print_divider() { for divider in $(seq 1 "$1") ; do printf "%s" "$2" ; done ; pr
 
 if [ "$#" -eq 0 ] ; then
   SEQSTART=1
-  SEQEND=12
+  SEQEND=13
 elif [ "$#" -eq 1 ] && [ "x$1" != "x-h" ] ; then
   SEQSTART="$1"
   SEQEND="$1"
@@ -74,6 +74,14 @@ for i in $(seq "$SEQSTART" "$SEQEND") ; do
 
       strip --strip-unneeded target/run
       cat input | target/run
+    elif [ "$i" = "13" ] ; then
+      rm -rf target
+      mkdir target
+      cc -std=c11 -o target/run -O2 -Wall -Wextra main.c
+      chmod +x target/run
+
+      strip --strip-unneeded target/run
+      zcat input.gz | target/run
     else
       if [ "$i" = "7" ] ; then
         rm -rf bin
