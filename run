@@ -29,7 +29,7 @@ print_divider() { for divider in $(seq 1 "$1") ; do printf "%s" "$2" ; done ; pr
 
 if [ "$#" -eq 0 ] ; then
   SEQSTART=1
-  SEQEND=15
+  SEQEND=16
 elif [ "$#" -eq 1 ] && [ "x$1" != "x-h" ] ; then
   SEQSTART="$1"
   SEQEND="$1"
@@ -97,6 +97,8 @@ for i in $(seq "$SEQSTART" "$SEQEND") ; do
         zcat input.gz | lua run.lua
       elif [ "$i" = "15" ] ; then
         zcat input.gz | gst -f run.st
+      elif [ "$i" = "16" ] ; then
+        dart run.dart < input
       else
         zcat input.gz | ./run
       fi
