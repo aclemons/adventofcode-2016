@@ -1,0 +1,218 @@
+#!/usr/bin/awk -f
+
+# MIT License
+
+# Copyright (c) 2016 Andrew Clemons
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+function swap_position(x, y) {
+    hold = password[x]
+    password[x] = password[y]
+    password[y] = hold
+}
+
+function swap_letter(x, y,     i) {
+    for (i = 1; i <= len; i++) {
+        if (password[i] == x) {
+            password[i] = y
+        } else if (password[i] == y) {
+            password[i] = x
+        }
+    }
+}
+
+function rotate(direction, x,    i) {
+    if (x > len) {
+        x = x - len
+    }
+
+    if (direction == "left") {
+        for (i = 1; i <= len; i++) {
+            if (i - x < 1) {
+                new_password[i - x + len] = password[i]
+            } else {
+                new_password[i - x] = password[i]
+            }
+        }
+    } else {
+        for (i = 1; i <= len; i++) {
+            if (i + x > len) {
+                new_password[i + x - len] = password[i]
+            } else {
+                new_password[i + x] = password[i]
+            }
+        }
+    }
+
+    for (i = 1; i <= len; i++) {
+        password[i] = new_password[i]
+        delete new_password[i]
+    }
+}
+
+function rotate_based(x,    i) {
+    for (i = 1; i <= len; i++) {
+        if (password[i] == x) {
+            idx = i
+            break
+        }
+    }
+
+    idx = idx - 1
+
+    if (idx >= 4) {
+        idx = idx + 1
+    }
+
+    rotate_count = idx + 1
+
+    rotate("right", rotate_count)
+}
+
+function unrotate_based(x,    i) {
+    rotate_by = 0
+    for (a = 1; a <= len; a++) {
+        for (i = 1; i <= len; i++) {
+            current_password[i] = password[i]
+        }
+
+        rotate("right", a)
+        rotate_based(x)
+
+        array_equals = 1
+        for (b = 1; b <= len; b++) {
+            if (current_password[b] != password[b]) {
+                array_equals = 0
+                break
+            }
+        }
+
+        for (i = 1; i <= len; i++) {
+            password[i] = current_password[i]
+            delete current_password[i]
+        }
+
+        if (array_equals == 1) {
+            rotate_by = a
+            break
+        }
+    }
+
+    rotate("right", rotate_by)
+}
+
+function reverse(x, y,    i) {
+    for (i = 0; i <= int((y - x) / 2); i++) {
+        swap_position(x + i, y - i)
+    }
+}
+
+function move(x, y,    i) {
+    hold = password[x]
+
+    if (x < y) {
+        for (i = x; i < y; i++) {
+            password[i] = password[i + 1]
+        }
+    } else {
+        for (i = x; i > y; i--) {
+            password[i] = password[i - 1]
+        }
+    }
+
+    password[y] = hold
+}
+
+BEGIN {
+    initial_password = "abcdefgh"
+    split(initial_password, password, "")
+    len = length(password)
+}
+
+{
+    buffer[NR] = $0
+    split($0, pieces, " ")
+}
+
+/swap position/ {
+    swap_position(pieces[3] + 1, pieces[6] + 1)
+}
+
+/swap letter/ {
+    swap_letter(pieces[3], pieces[6])
+}
+
+/rotate (right|left)/ {
+    rotate(pieces[2], pieces[3])
+}
+
+/rotate based/ {
+    rotate_based(pieces[7])
+}
+
+/reverse positions/ {
+    reverse(pieces[3] + 1, pieces[5] + 1)
+}
+
+/move position/ {
+    move(pieces[3] + 1, pieces[6] + 1)
+}
+
+END {
+    printf "The result of scrambling %s is: ", initial_password
+
+    for (n = 1; n <= len; n++) {
+        printf "%s", password[n]
+        delete password[n]
+    }
+
+    printf "\n"
+
+    scrambled_password = "fbgdceah"
+    split(scrambled_password, password, "")
+    len = length(scrambled_password)
+
+    for (n = length(buffer); n > 0; n--) {
+        line = buffer[n]
+        split(line, pieces, " ")
+
+        if (match(line, "swap position") != 0) {
+            swap_position(pieces[6] + 1, pieces[3] + 1)
+        } else if (match(line, "swap letter") != 0) {
+            swap_letter(pieces[3], pieces[6])
+        } else if (match(line, "rotate (right|left)") != 0) {
+            rotate(pieces[2] == "right" ? "left" : "right", pieces[3])
+        } else if (match(line, "rotate based") != 0) {
+            unrotate_based(pieces[7])
+        } else if (match(line, "reverse positions") != 0) {
+            reverse(pieces[3] + 1, pieces[5] + 1)
+        } else if (match(line, "move position") != 0) {
+            move(pieces[6] + 1, pieces[3] + 1)
+        }
+    }
+
+    printf "The result of unscrambling %s is: ", scrambled_password
+
+    for (n = 1; n <= len; n++) {
+        printf "%s", password[n]
+    }
+
+    printf "\n"
+}

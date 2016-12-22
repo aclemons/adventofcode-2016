@@ -36,3 +36,4 @@ Solutions
 * [day18](day18) - C++      (tested with gcc 5.3.0)
 * [day19](day19) - Julia    (tested with 0.4.7)
 * [day20](day20) - Elixir   (tested with 1.3.4)
+* [day21](day21) - AWK      (tested with gawk 4.1.3)
