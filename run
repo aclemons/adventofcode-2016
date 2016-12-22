@@ -29,7 +29,7 @@ print_divider() { for divider in $(seq 1 "$1") ; do printf "%s" "$2" ; done ; pr
 
 if [ "$#" -eq 0 ] ; then
   SEQSTART=1
-  SEQEND=17
+  SEQEND=18
 elif [ "$#" -eq 1 ] && [ "x$1" != "x-h" ] ; then
   SEQSTART="$1"
   SEQEND="$1"
@@ -66,12 +66,14 @@ for i in $(seq "$SEQSTART" "$SEQEND") ; do
       cargo build --release --quiet
       strip --strip-unneeded "target/release/$day"
       "target/release/$day" < input
-    elif [ "$i" = "13" ] || [ "$i" = "14" ]; then
+    elif [ "$i" = "13" ] || [ "$i" = "14" ] || [ "$i" = "18" ] ; then
       rm -rf target
       mkdir target
 
       if  [ "$i" = "14" ] ; then
         gccgo -o target/run main.go
+      elif  [ "$i" = "18" ] ; then
+        c++ -o target/run -O2 -Wall -Wextra main.cpp
       else
         cc -std=c11 -o target/run -O2 -Wall -Wextra main.c
       fi
@@ -80,7 +82,7 @@ for i in $(seq "$SEQSTART" "$SEQEND") ; do
 
       strip --strip-unneeded target/run
 
-      if  [ "$i" = "14" ] ; then
+      if  [ "$i" = "14" ] || [ "$i" = "18" ] ; then
         target/run < input
       else
         zcat input.gz | target/run
