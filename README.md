@@ -38,3 +38,4 @@ Solutions
 * [day20](day20) - Elixir   (tested with 1.3.4)
 * [day21](day21) - AWK      (tested with gawk 4.1.3)
 * [day22](day22) - Unknown  (tested with unknown)
+* [day23](day23) - Unknown  (tested with unknown)
