@@ -39,3 +39,4 @@ Solutions
 * [day21](day21) - AWK      (tested with gawk 4.1.3)
 * [day22](day22) - Unknown  (tested with unknown)
 * [day23](day23) - Unknown  (tested with unknown)
+* [day24](day24) - Unknown  (tested with unknown)
