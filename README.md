@@ -30,3 +30,4 @@ Solutions
 * [day12](day12) - Tcl      (tested with 8.6)
 * [day13](day13) - C        (tested with gcc 5.3.0)
 * [day14](day14) - Go       (tested with gccgo 5.3.0)
+* [day15](day15) - Smalltalk(tested with gnu smalltalk 3.2.5)
