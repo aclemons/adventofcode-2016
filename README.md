@@ -40,3 +40,4 @@ Solutions
 * [day22](day22) - Unknown  (tested with unknown)
 * [day23](day23) - Unknown  (tested with unknown)
 * [day24](day24) - Unknown  (tested with unknown)
+* [day25](day25) - Unknown  (tested with unknown)
