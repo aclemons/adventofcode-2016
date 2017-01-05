@@ -29,7 +29,7 @@ print_divider() { for divider in $(seq 1 "$1") ; do printf "%s" "$2" ; done ; pr
 
 if [ "$#" -eq 0 ] ; then
   SEQSTART=1
-  SEQEND=21
+  SEQEND=22
 elif [ "$#" -eq 1 ] && [ "x$1" != "x-h" ] ; then
   SEQSTART="$1"
   SEQEND="$1"
